@@ -7,10 +7,13 @@ import java.util.regex.Pattern;
 public class Application {
 
     public void Calculator() {
-        System.out.print("덧셈할 문자열을 입력하세요: ");
+        System.out.println("덧셈할 문자열을 입력해 주세요.");
         String userInput = Console.readLine();
         String[] separateString = separateInput(userInput);
         int[] numbers = extractNumbers(separateString);
+        int sum = summateNumbers(numbers);
+
+        System.out.println("결과 : " + sum);
     }
 
     private String[] separateInput(String inputString) {
@@ -31,9 +34,9 @@ public class Application {
     }
 
     private int[] extractNumbers(String[] extractString) throws IllegalArgumentException {
-        String numberRegex = "[0-9]+";
+        String numberRegex = "^-?\\d+$"; // 모든 정수를 나타내는 정규표현식
         int[] extractNumbers = new int[extractString.length];
-        if(extractString.length == 0) { // 예외처리 #2 추출 할 숫자가 없을 시(빈문자열)
+        if(extractString.length == 1 && extractString[0].isEmpty()) { // 예외처리 #2 추출 할 숫자가 없을 시(빈문자열)
             return new int[0];
         }
         else {
@@ -43,15 +46,25 @@ public class Application {
             for(int i=0; i<extractString.length; i++) {
                 if (extractString[i].matches(numberRegex)) {
                     number = Integer.parseInt(extractString[i]);
+                    if(number < 0) {
+                        throw new IllegalArgumentException("음수는 입력할 수 없습니다.");
+                    }
                     extractNumbers[i] = number;
-                    System.out.print(number);
                 }
-                else {
-                    throw new IllegalArgumentException("예외처리 #3: 추출 할 양수가 없습니다.");
+                else if(extractNumbers.length == 1 && extractNumbers[i] == 0) {
+                    throw new IllegalArgumentException("추출 할 양수가 없습니다.");
                 }
             }
             return extractNumbers;
         }
+    }
+
+    private int summateNumbers(int[] numbers) {
+        int sum = 0;
+        for(int n: numbers) {
+            sum += n;
+        }
+        return sum;
     }
 
     public static void main(String[] args) {
