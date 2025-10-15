@@ -13,30 +13,47 @@ class ApplicationTest extends NsTest {
     void 커스텀_구분자_사용() {
         assertSimpleTest(() -> {
             run("//;\\n1");
-            assertThat(output()).contains("결과: 1");
+            assertThat(output()).contains("결과 : 1");
         });
     }
 
     @Test
     void 예외1_구분자_없음() {
         assertSimpleTest(() ->{
-            run("1");
-            assertThat(output().contains("1"));
+            run("123");
+            assertThat(output()).contains("결과 : 123");
         });
     }
 
     @Test
-    void 예외2_빈문자열() {
+    void 예외2_복합_구분자() {
         assertSimpleTest(() -> {
-            run("");
-            assertThat(output().contains("0"));
+            run("//;\\n1,2:3;4");
+            assertThat(output()).contains("결과 : 10");
         });
     }
 
     @Test
-    void 예외3_숫자없는_입력값() {
+    void 예외3_빈문자열() {
         assertSimpleTest(() -> {
-            assertThatIllegalArgumentException().isThrownBy(() -> run("abc"));
+            run("\n");
+            assertThat(output()).contains("결과 : 0");
+        });
+    }
+
+    @Test
+    void 예외4_숫자없는_입력값() {
+        assertSimpleTest(() ->
+            assertThatThrownBy(() -> runException("abc"))
+                    .isInstanceOf(IllegalArgumentException.class)
+        );
+    }
+
+    @Test
+    void 예외5_구분자_여러개() {
+        assertSimpleTest(() -> {
+            run("//;;;\\n1,2:3;;;4");
+            assertThat(output()).contains("결과 : 2");
         });
     }
 
