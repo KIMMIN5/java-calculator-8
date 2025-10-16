@@ -1,6 +1,7 @@
 package calculator;
 
 import camp.nextstep.edu.missionutils.test.NsTest;
+import jdk.jfr.Description;
 import org.junit.jupiter.api.Test;
 
 import static camp.nextstep.edu.missionutils.test.Assertions.assertSimpleTest;
@@ -18,7 +19,15 @@ class ApplicationTest extends NsTest {
     }
 
     @Test
-    void 예외1_구분자_없음() {
+    void 예외_테스트() {
+        assertSimpleTest(() ->
+            assertThatThrownBy(() -> runException("-1,2,3"))
+                .isInstanceOf(IllegalArgumentException.class)
+        );
+    }
+
+    @Test
+    void 예외_2_1_구분자_없음() {
         assertSimpleTest(() ->{
             run("123");
             assertThat(output()).contains("결과 : 123");
@@ -26,7 +35,7 @@ class ApplicationTest extends NsTest {
     }
 
     @Test
-    void 예외2_복합_구분자() {
+    void 예외_2_2_복합_구분자() {
         assertSimpleTest(() -> {
             run("//;\\n1,2:3;4");
             assertThat(output()).contains("결과 : 10");
@@ -34,34 +43,35 @@ class ApplicationTest extends NsTest {
     }
 
     @Test
-    void 예외3_빈문자열() {
+    void 예외_3_1_음수() {
         assertSimpleTest(() -> {
-            run("\n");
-            assertThat(output()).contains("결과 : 0");
+            assertThatThrownBy(() -> runException("-1, 2, 3"))
+                    .isInstanceOf(IllegalArgumentException.class);
         });
     }
 
     @Test
-    void 예외4_숫자없는_입력값() {
+    void 예외_3_2_숫자없는_입력값() {
         assertSimpleTest(() ->
-            assertThatThrownBy(() -> runException("abc"))
-                    .isInstanceOf(IllegalArgumentException.class)
+                assertThatThrownBy(() -> runException("abc"))
+                        .isInstanceOf(IllegalArgumentException.class)
+        );
+    }
+
+    @Description("README 내부로직 예외처리 테스트 코드")
+    @Test
+    void 예외_3_3_문자숫자_섞임() {
+        assertSimpleTest(() ->
+                assertThatThrownBy(() -> runException("1, a, 2"))
+                        .isInstanceOf(IllegalArgumentException.class)
         );
     }
 
     @Test
-    void 예외5_구분자_여러개() {
-        assertSimpleTest(() -> {
-            run("//;;;\\n1,2:3;;;4");
-            assertThat(output()).contains("결과 : 2");
-        });
-    }
-
-    @Test
-    void 예외_테스트() {
+    void 예외_3_4_구분자_여러개() {
         assertSimpleTest(() ->
-            assertThatThrownBy(() -> runException("-1,2,3"))
-                .isInstanceOf(IllegalArgumentException.class)
+                assertThatThrownBy(() -> runException("//;;;\n1;;;2;;;3"))
+                        .isInstanceOf(IllegalArgumentException.class)
         );
     }
 
