@@ -45,7 +45,7 @@ class ApplicationTest extends NsTest {
     @Test
     void 예외_3_1_음수() {
         assertSimpleTest(() -> {
-            assertThatThrownBy(() -> runException("-1, 2, 3"))
+            assertThatThrownBy(() -> runException("-1,2,3"))
                     .isInstanceOf(IllegalArgumentException.class);
         });
     }
@@ -62,7 +62,7 @@ class ApplicationTest extends NsTest {
     @Test
     void 예외_3_3_문자숫자_섞임() {
         assertSimpleTest(() ->
-                assertThatThrownBy(() -> runException("1, a, 2"))
+                assertThatThrownBy(() -> runException("1,a,2"))
                         .isInstanceOf(IllegalArgumentException.class)
         );
     }
